@@ -1,7 +1,8 @@
 ## Test 1
 
-## Getting Started
+## How to setup
 
+- clone repo
 - run composer install
 - run php artisan migrate
 
