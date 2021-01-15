@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Task;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class TaskController extends Controller
 {
@@ -93,11 +94,18 @@ class TaskController extends Controller
         if ($request->has('id')) {
             $task = Task::find($request->input('id'));
             
-            $task->status       = $request->status;            
+            $task->status = $request->status;
+            $task->task_done = $request->status == 1 ? Carbon::now() : null;
             $task->save();
 
             return redirect()->back()
                     ->with('message', 'Task status was updated successfully.');
         }
+    }
+
+    public function chartdata(Request $request){
+        $user = auth()->user();  
+        $data = Task::where('user_id',$user->id)->get();
+        return response()->json($data);
     }
 }

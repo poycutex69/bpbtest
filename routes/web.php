@@ -32,4 +32,5 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 Route::resource('tasks', TaskController::class);
 Route::get('/tasks', [TaskController::class, 'index'])->name('tasks.index');
+Route::get('/tasks/chartdata', [TaskController::class, 'chartdata'])->name('tasks.chartdata');
 Route::post('/tasks/updatestatus/{id}', [TaskController::class, 'updatestatus'])->name('tasks.updatestatus');

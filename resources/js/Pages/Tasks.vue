@@ -7,6 +7,10 @@
         </template>
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-4 mb-4">
+                    Chart<br/>
+                    <line-chart v-if="loaded" :chart-data="chartdata" :options="options"></line-chart>
+                </div>
                 <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg px-4 py-4">
                     <!-- <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md my-3" role="alert" v-if="$page.flash.message">
                       <div class="flex">
@@ -100,10 +104,12 @@
 <script>
     import AppLayout from './../Layouts/AppLayout'
     import Welcome from './../Jetstream/Welcome'
+    import LineChart from './Chart.vue'
     export default {
         components: {
             AppLayout,
             Welcome,
+            LineChart
         },
         props: ['data', 'errors'],
         data() {
@@ -114,7 +120,25 @@
                     title: null,
                     description: null,
                 },
+                interval: null,
+                loaded: false,
+                chartdata: {
+                    labels: [],
+                    datasets: [{
+                            label: 'Tasks',
+                            backgroundColor: '#FCD25B',
+                            data: []
+                    }]
+                }
             }
+        },
+        mounted () {
+            this.loaded = true  
+            this.interval = setInterval(() => {
+                this.fillData();
+            },60000);
+            this.fillData();
+            
         },
         
         methods: {
@@ -162,7 +186,24 @@
                 this.$inertia.post('/tasks/updatestatus/' + data.id, data)
                 this.reset();
                 this.closeModal();
-            }
+            },
+            countOpenTasks: function(){
+                let res = 0;
+                for(let x=0;x < this.data.length; x++){
+                    if(this.data[x].status == 0) {
+                        res++;
+                    }
+                }
+                return res;
+            },
+            fillData () {
+                var d = new Date();
+                let time = d.getHours()+":"+d.getMinutes();
+
+                this.chartdata.labels.push(time);  
+                this.chartdata.datasets[0].data.push(this.countOpenTasks());
+                
+            },
         }
     }
 </script>

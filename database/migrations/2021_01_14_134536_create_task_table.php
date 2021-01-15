@@ -18,7 +18,9 @@ class CreateTaskTable extends Migration
             $table->string('title');
             $table->text('description');
             $table->tinyInteger('status')->default(0);
+            $table->timestamp('task_done')->nullable();
             $table->foreignId('user_id')->index();
+
             $table->timestamps();
         });
     }
